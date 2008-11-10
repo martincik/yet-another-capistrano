@@ -1,0 +1,39 @@
+= Yet Another Capistrano
+Author: Ladislav Martincik (ladislav.martincik@gmail.com)
+
+Motivation:
+
+- Have possibility to 'easily' implement different deploy/server workflows
+ + Example:
+   workflow do
+     concurrence :roles => [:app] do
+       # Upload source to all servers 
+     end
+     
+     sequence :roles => [:db] do 
+       # Migrate database
+     end
+     
+     sequence :roles => [:app] do
+       # Restart server one by one
+     end
+   end
+
+- Separate task definition from workflow definition
+  + workflow definition executes tasks
+  + tasks are always sequential
+    - basic bash commands
+    - sudo commands
+  + Example:
+    
+    task :ls_al do 
+      sudo 'ls -al /root' do |input|
+        push 'password' if input ~= /Password:/
+      end
+      
+      run 'pwd; ls -al'
+    end
+
+- Separation of data from logic
+  + Configuration settings should be on different place than workflow
+   * Configuration files can be defined as YAML or pure Ruby (for dynamics)
